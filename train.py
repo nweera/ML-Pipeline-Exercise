@@ -43,6 +43,7 @@ def train_and_evaluate(model_name, model, X_train, X_test, y_train, y_test):
 def main():
     # Load config
     config = load_config()
+    print
 
     # Load dataset
     df = pd.read_csv(config["dataset"]["path"])
