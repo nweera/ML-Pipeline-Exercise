@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 # Load prepared data
-df = pd.read_csv("C:\\Users\\user\\Desktop\\3rd year\\ML-Pipeline-Exercise\\data\\dataset_preprocessed.csv")
+df = pd.read_csv("data\\dataset_preprocessed.csv")
 
 X = df.drop("target", axis=1)
 y = df["target"]
