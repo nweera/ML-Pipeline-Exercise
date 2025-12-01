@@ -30,8 +30,10 @@ jobs:
       - name: Run training and evaluation
         run: python train.py
 
-      - name: Upload metrics artifact
+      - name: Upload all metrics artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ml-metrics
-          path: metrics.txt
+          name: ml-experiments
+          path: metrics_*.txt
+
+

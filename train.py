@@ -1,56 +1,30 @@
-# train.py
-import argparse
-import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, classification_report
-import joblib
+from sklearn.metrics import accuracy_score
 
-PREPROCESSED_PATH = "data/dataset_preprocessed.csv"
+# Load prepared data
+df = pd.read_csv("data/prepared.csv")
 
-def get_model(name):
-    if name == "rf":
-        return RandomForestClassifier(n_estimators=100, random_state=42)
-    if name == "svm":
-        return SVC(kernel="rbf", probability=True)
-    if name == "knn":
-        return KNeighborsClassifier(n_neighbors=5)
-    raise ValueError(f"Unknown model: {name}")
+X = df.drop("target", axis=1)
+y = df["target"]
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model", type=str, default="rf",
-                        help="Choose: rf, svm, knn")
-    args = parser.parse_args()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    df = pd.read_csv(PREPROCESSED_PATH)
-    X = df.drop(columns=["target"])
-    y = df["target"]
+models = {
+    "logistic_regression": LogisticRegression(max_iter=200),
+    "decision_tree": DecisionTreeClassifier(max_depth=5),
+    "random_forest": RandomForestClassifier(n_estimators=50),
+}
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
-
-    model = get_model(args.model)
+for model_name, model in models.items():
     model.fit(X_train, y_train)
     preds = model.predict(X_test)
+    acc = accuracy_score(y_test, preds)
 
-    accuracy = accuracy_score(y_test, preds)
-    report = classification_report(y_test, preds)
-
-    # Save metrics
-    metrics_path = f"metrics_{args.model}.txt"
-    with open(metrics_path, "w") as f:
-        f.write(f"MODEL: {args.model}\n")
-        f.write(f"Accuracy: {accuracy:.4f}\n\n")
-        f.write(report)
-
-    joblib.dump(model, f"model_{args.model}.joblib")
-
-    print(f"Saved {metrics_path} and model_{args.model}.joblib")
-
-if __name__ == "__main__":
-    main()
+    # Save metrics file per model
+    with open(f"metrics_{model_name}.txt", "w") as f:
+        f.write(f"Model: {model_name}\n")
+        f.write(f"Accuracy: {acc:.4f}\n")
