@@ -1,5 +1,5 @@
 dataset:
-  path: "data/dataset_preprocessed.csv"
+  path: "./data/dataset_preprocessed.csv"
 
 split:
   test_size: 0.2
