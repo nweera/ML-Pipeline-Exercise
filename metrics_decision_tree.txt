@@ -1,0 +1,2 @@
+Model: decision_tree
+Accuracy: 1.0000
